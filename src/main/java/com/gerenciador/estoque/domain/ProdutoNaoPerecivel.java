@@ -17,4 +17,12 @@ public class ProdutoNaoPerecivel extends Produto {
 
     public Integer getGarantiaMeses() { return garantiaMeses; }
     public void setGarantiaMeses(Integer garantiaMeses) { this.garantiaMeses = garantiaMeses; }
+
+    @Override
+    public String toString() {
+        return "ProdutoNaoPerecivel{\n" +
+                dadosToString() + ",\n" +
+                "  garantiaMeses=" + garantiaMeses + "\n" +
+                "}";
+    }
 }

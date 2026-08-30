@@ -7,7 +7,7 @@ import java.util.List;
 public class Movimentacao {
     private Long id;
     private LocalDateTime dataHora;
-    private TipoMovimentacao tipo; // ENTRADA ou SAIDA
+    private TipoMovimentacao tipo;
     private Usuario usuario;
     private String observacao;
     private List<ItemMovimentacao> itens = new ArrayList<>();
@@ -39,4 +39,16 @@ public class Movimentacao {
     public void setObservacao(String observacao) { this.observacao = observacao; }
     public List<ItemMovimentacao> getItens() { return itens; }
     public void setItens(List<ItemMovimentacao> itens) { this.itens = itens; }
+
+    @Override
+    public String toString() {
+        return "Movimentacao{\n" +
+                "  id=" + id + ",\n" +
+                "  dataHora=" + dataHora + ",\n" +
+                "  tipo=" + tipo + ",\n" +
+                "  usuario=" + usuario.getNome() + ",\n" +
+                "  observacao='" + observacao + "',\n" +
+                "  quantidadeItens=" + itens.size() + "\n" +
+                '}';
+    }
 }

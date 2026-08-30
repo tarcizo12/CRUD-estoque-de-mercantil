@@ -30,4 +30,17 @@ public class Fornecedor {
     public void setEmail(String email) { this.email = email; }
     public String getEndereco() { return endereco; }
     public void setEndereco(String endereco) { this.endereco = endereco; }
+
+
+    @Override
+    public String toString() {
+        return "Fornecedor{\n" +
+                "  id=" + id + ",\n" +
+                "  nome='" + nome + "',\n" +
+                "  cnpj='" + cnpj + "',\n" +
+                "  telefone='" + telefone + "',\n" +
+                "  email='" + email + "',\n" +
+                "  endereco='" + endereco + "'\n" +
+                '}';
+    }
 }

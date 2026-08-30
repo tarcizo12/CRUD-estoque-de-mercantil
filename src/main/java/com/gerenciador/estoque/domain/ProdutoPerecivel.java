@@ -23,4 +23,13 @@ public class ProdutoPerecivel extends Produto {
     public void setDataValidade(LocalDate dataValidade) { this.dataValidade = dataValidade; }
     public String getLote() { return lote; }
     public void setLote(String lote) { this.lote = lote; }
+
+    @Override
+    public String toString() {
+        return "ProdutoPerecivel{\n" +
+                dadosToString() + ",\n" +
+                "  dataValidade=" + dataValidade + ",\n" +
+                "  lote='" + lote + "'\n" +
+                "}";
+    }
 }

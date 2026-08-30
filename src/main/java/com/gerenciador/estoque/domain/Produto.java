@@ -37,4 +37,21 @@ public abstract class Produto {
     public void setCategoria(Categoria categoria) { this.categoria = categoria; }
     public Fornecedor getFornecedor() { return fornecedor; }
     public void setFornecedor(Fornecedor fornecedor) { this.fornecedor = fornecedor; }
+
+    protected String dadosToString() {
+        return "  id=" + id + ",\n" +
+                "  nome='" + nome + "',\n" +
+                "  descricao='" + descricao + "',\n" +
+                "  preco=" + preco + ",\n" +
+                "  quantidadeEstoque=" + quantidadeEstoque + ",\n" +
+                "  categoria=" + categoria.getNome() + ",\n" +
+                "  fornecedor=" + fornecedor.getNome();
+    }
+
+    @Override
+    public String toString() {
+        return "Produto{\n" +
+                dadosToString() +
+                "\n}";
+    }
 }

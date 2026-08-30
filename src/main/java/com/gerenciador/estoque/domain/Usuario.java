@@ -26,4 +26,14 @@ public class Usuario {
     public void setSenha(String senha) { this.senha = senha; }
     public String getPerfil() { return perfil; }
     public void setPerfil(String perfil) { this.perfil = perfil; }
+
+    @Override
+    public String toString() {
+        return "Usuario{\n" +
+                "  id=" + id + ",\n" +
+                "  nome='" + nome + "',\n" +
+                "  login='" + login + "',\n" +
+                "  perfil='" + perfil + "'\n" +
+                '}';
+    }
 }
