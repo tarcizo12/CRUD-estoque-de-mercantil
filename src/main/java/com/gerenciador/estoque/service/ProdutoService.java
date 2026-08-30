@@ -7,6 +7,7 @@ import com.gerenciador.estoque.exception.RegistroNaoLocalizadoException;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ProdutoService {
@@ -42,23 +43,40 @@ public class ProdutoService {
         return produtoAtualizado;
     }
 
-    public void excluir(Long id) {
-        if (this.idProdutoInformadoNaoExistente(id)) {
-            throw new RegistroNaoLocalizadoException(MENSAGEM_DEFAULT_ID_NAO_LOCALIZADO.formatted(id));
-        }
-        produtos.remove(id);
-    }
 
     public Produto obterPorId(Long id) {
         Produto produto = produtos.get(id);
-        if (produto == null) {
+        if (produto == null){
             throw new RegistroNaoLocalizadoException(MENSAGEM_DEFAULT_ID_NAO_LOCALIZADO.formatted(id));
         }
         return produto;
     }
 
-    public List<Produto> listarTodos() {
-        return new ArrayList<>(produtos.values());
+    public void listarResumoEstoqueCadastrado(){
+        System.out.println("=== Produtos cadastrados ===");
+
+        new ArrayList<>(produtos.values()).forEach(p ->
+                System.out.printf("ID: %d - %s (Estoque: %d)%n",
+                        p.getId(), p.getNome(), p.getQuantidadeEstoque())
+        );
+    }
+
+    public List<Produto> getListaProdutosValidos() {
+        return produtos.values().stream()
+                .filter(Produto::isValido)
+                .collect(Collectors.toList());
+    }
+
+    public List<Produto> getListaProdutosForaDaValidade() {
+        return produtos.values().stream()
+                .filter(p -> !p.isValido())
+                .collect(Collectors.toList());
+    }
+
+    public List<Produto> getProdutosOrdenadosPorNome() {
+        return produtos.values().stream()
+                .sorted(Comparator.comparing(Produto::getNome, String.CASE_INSENSITIVE_ORDER))
+                .collect(Collectors.toList());
     }
 
     private boolean idProdutoInformadoNaoExistente(Long id){
