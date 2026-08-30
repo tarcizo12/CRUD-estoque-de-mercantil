@@ -1,0 +1,26 @@
+package com.gerenciador.estoque.domain;
+
+import java.time.LocalDate;
+
+public class ProdutoPerecivel extends Produto {
+    private LocalDate dataValidade;
+    private String lote;
+
+    public ProdutoPerecivel() {}
+
+    public ProdutoPerecivel(String nome, String descricao, Double preco, Integer quantidadeEstoque,
+                            Categoria categoria, Fornecedor fornecedor,
+                            LocalDate dataValidade, String lote) {
+        super(nome, descricao, preco, quantidadeEstoque, categoria, fornecedor);
+        this.dataValidade = dataValidade;
+        this.lote = lote;
+    }
+
+    @Override
+    public boolean isValido() { return LocalDate.now().isBefore(dataValidade);}
+
+    public LocalDate getDataValidade() { return dataValidade; }
+    public void setDataValidade(LocalDate dataValidade) { this.dataValidade = dataValidade; }
+    public String getLote() { return lote; }
+    public void setLote(String lote) { this.lote = lote; }
+}
