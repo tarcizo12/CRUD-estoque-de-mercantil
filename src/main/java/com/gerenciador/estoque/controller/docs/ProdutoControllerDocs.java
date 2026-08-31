@@ -1,9 +1,9 @@
 package com.gerenciador.estoque.controller.docs;
 
-
 import com.gerenciador.estoque.domain.dto.ProdutoRequest;
 import com.gerenciador.estoque.domain.entity.Produto;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -15,9 +15,23 @@ import java.util.List;
 @Tag(name = "Produtos", description = "Gerenciamento de produtos do estoque")
 public interface ProdutoControllerDocs {
 
-    @Operation(summary = "Listar todos os produtos")
+    @Operation(summary = "Listar todos os produtos (ordenados por nome)")
     @GetMapping
     ResponseEntity<List<Produto>> listarTodos();
+
+    @Operation(summary = "Listar produtos com estoque abaixo do limite")
+    @GetMapping("/estoque-baixo")
+    ResponseEntity<List<Produto>> listarEstoqueBaixo(
+            @Parameter(description = "Quantidade mínima para considerar estoque baixo", example = "5")
+            @RequestParam(defaultValue = "10") Integer limite);
+
+    @Operation(summary = "Listar produtos por categoria")
+    @GetMapping("/categoria/{categoriaId}")
+    ResponseEntity<List<Produto>> listarPorCategoria(@PathVariable Long categoriaId);
+
+    @Operation(summary = "Listar produtos por fornecedor")
+    @GetMapping("/fornecedor/{fornecedorId}")
+    ResponseEntity<List<Produto>> listarPorFornecedor(@PathVariable Long fornecedorId);
 
     @Operation(summary = "Buscar produto por ID")
     @ApiResponses({

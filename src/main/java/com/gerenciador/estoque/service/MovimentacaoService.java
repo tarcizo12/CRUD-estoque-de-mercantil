@@ -1,31 +1,37 @@
 package com.gerenciador.estoque.service;
 
-
 import com.gerenciador.estoque.domain.entity.ItemMovimentacao;
 import com.gerenciador.estoque.domain.entity.Movimentacao;
 import com.gerenciador.estoque.domain.entity.Produto;
+import com.gerenciador.estoque.domain.entity.Usuario;
 import com.gerenciador.estoque.domain.enums.TipoMovimentacao;
 import com.gerenciador.estoque.exception.EntradaInvalidaException;
 import com.gerenciador.estoque.exception.EstoqueInsuficienteException;
 import com.gerenciador.estoque.exception.RegistroNaoLocalizadoException;
+import com.gerenciador.estoque.repository.MovimentacaoRepository;
+import com.gerenciador.estoque.repository.ProdutoRepository;
+import com.gerenciador.estoque.repository.UsuarioRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class MovimentacaoService {
 
-    private final ProdutoService produtoService;
-    private final Map<Long, Movimentacao> movimentacoes = new HashMap<>();
-    private Long nextId = 1L;
+    private final MovimentacaoRepository movimentacaoRepository;
+    private final ProdutoRepository produtoRepository;
+    private final UsuarioRepository usuarioRepository;
 
-    public MovimentacaoService(ProdutoService produtoService) {
-        this.produtoService = produtoService;
+    public MovimentacaoService(MovimentacaoRepository movimentacaoRepository,
+                               ProdutoRepository produtoRepository,
+                               UsuarioRepository usuarioRepository) {
+        this.movimentacaoRepository = movimentacaoRepository;
+        this.produtoRepository = produtoRepository;
+        this.usuarioRepository = usuarioRepository;
     }
 
+    @Transactional
     public Movimentacao registrarMovimentacao(Movimentacao movimentacao) {
         if (movimentacao == null || movimentacao.getItens() == null || movimentacao.getItens().isEmpty()) {
             throw new EntradaInvalidaException("Movimentação deve conter pelo menos um item.");
@@ -35,40 +41,37 @@ public class MovimentacaoService {
         }
 
 
+        Usuario usuario = usuarioRepository.findById(movimentacao.getUsuario().getId())
+                .orElseThrow(() -> new RegistroNaoLocalizadoException("Usuário com ID " + movimentacao.getUsuario().getId() + " não encontrado."));
+        movimentacao.setUsuario(usuario);
+
         for (ItemMovimentacao item : movimentacao.getItens()) {
             Produto produto = item.getProduto();
-            boolean produtoNaoExisteNoEstoque = produto == null || produto.getId() == null;
-
-            if (produtoNaoExisteNoEstoque) {
+            if (produto == null || produto.getId() == null) {
                 throw new EntradaInvalidaException("Produto do item não identificado.");
             }
 
-            Produto produtoEstoque = produtoService.obterPorId(produto.getId());
+            Produto produtoEstoque = produtoRepository.findById(produto.getId())
+                    .orElseThrow(() -> new RegistroNaoLocalizadoException("Produto com ID " + produto.getId() + " não encontrado."));
 
             if (!produtoEstoque.isValido()) {
                 throw new EntradaInvalidaException("Produto " + produtoEstoque.getNome() + " está vencido e não pode ser movimentado.");
             }
 
             Integer novaQuantidade = defineNovaQuantidadeEstoqueAposMovimentacao(movimentacao, item, produtoEstoque);
-
             produtoEstoque.setQuantidadeEstoque(novaQuantidade);
-            produtoService.alterar(produtoEstoque.getId(), produtoEstoque);
-
+            produtoRepository.save(produtoEstoque);
             item.setProduto(produtoEstoque);
         }
 
-        movimentacao.setId(nextId++);
-        movimentacoes.put(movimentacao.getId(), movimentacao);
-
-        return movimentacao;
+        return movimentacaoRepository.save(movimentacao);
     }
 
-    private static Integer defineNovaQuantidadeEstoqueAposMovimentacao(Movimentacao movimentacao, ItemMovimentacao item, Produto produtoEstoque) {
+    private Integer defineNovaQuantidadeEstoqueAposMovimentacao(Movimentacao movimentacao, ItemMovimentacao item, Produto produtoEstoque) {
         Integer novaQuantidade = produtoEstoque.getQuantidadeEstoque();
-
         if (movimentacao.getTipo() == TipoMovimentacao.ENTRADA) {
             novaQuantidade += item.getQuantidade();
-        }else{
+        } else {
             if (novaQuantidade < item.getQuantidade()) {
                 throw new EstoqueInsuficienteException(
                         "Estoque insuficiente para o produto " + produtoEstoque.getNome() +
@@ -81,14 +84,11 @@ public class MovimentacaoService {
     }
 
     public List<Movimentacao> listarTodas() {
-        return new ArrayList<>(movimentacoes.values());
+        return movimentacaoRepository.findAll();
     }
 
     public Movimentacao obterPorId(Long id) {
-        Movimentacao mov = movimentacoes.get(id);
-        if (mov == null) {
-            throw new RegistroNaoLocalizadoException("Movimentação com ID " + id + " não encontrada.");
-        }
-        return mov;
+        return movimentacaoRepository.findById(id)
+                .orElseThrow(() -> new RegistroNaoLocalizadoException("Movimentação com ID " + id + " não encontrada."));
     }
 }
