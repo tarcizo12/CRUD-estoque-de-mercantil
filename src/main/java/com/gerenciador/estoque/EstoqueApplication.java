@@ -1,13 +1,18 @@
 package com.gerenciador.estoque;
 
-import com.gerenciador.estoque.domain.*;
+import com.gerenciador.estoque.domain.entity.*;
+import com.gerenciador.estoque.domain.enums.TipoMovimentacao;
 import com.gerenciador.estoque.exception.EstoqueInsuficienteException;
 import com.gerenciador.estoque.service.MovimentacaoService;
 import com.gerenciador.estoque.service.ProdutoService;
+import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.OpenAPI;
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Bean;
 
 import java.time.LocalDate;
 
@@ -15,8 +20,8 @@ import java.time.LocalDate;
 public class EstoqueApplication {
 
     public static void main(String[] args) {
-        RUNNER_CASOS_TESTES(args);
-        //SpringApplication.run(EstoqueApplication.class, args);
+        //RUNNER_CASOS_TESTES(args);
+        SpringApplication.run(EstoqueApplication.class, args);
     }
 
     public static void RUNNER_CASOS_TESTES(String[] args) {
@@ -25,7 +30,7 @@ public class EstoqueApplication {
                         .web(WebApplicationType.NONE)
                         .run(args);
 
-        //ROTINA_INSTANCIAR_OBJETOS();
+        ROTINA_INSTANCIAR_OBJETOS();
         ROTINA_PERSISTENCIA_UTILIZANDO_MAP(context.getBean(ProdutoService.class));
 
         context.close();

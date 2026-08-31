@@ -1,15 +1,18 @@
 package com.gerenciador.estoque.service;
 
 
-import com.gerenciador.estoque.domain.ItemMovimentacao;
-import com.gerenciador.estoque.domain.Movimentacao;
-import com.gerenciador.estoque.domain.Produto;
-import com.gerenciador.estoque.domain.TipoMovimentacao;
+import com.gerenciador.estoque.domain.entity.ItemMovimentacao;
+import com.gerenciador.estoque.domain.entity.Movimentacao;
+import com.gerenciador.estoque.domain.entity.Produto;
+import com.gerenciador.estoque.domain.enums.TipoMovimentacao;
 import com.gerenciador.estoque.exception.EntradaInvalidaException;
 import com.gerenciador.estoque.exception.EstoqueInsuficienteException;
+import com.gerenciador.estoque.exception.RegistroNaoLocalizadoException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -75,5 +78,17 @@ public class MovimentacaoService {
             novaQuantidade -= item.getQuantidade();
         }
         return novaQuantidade;
+    }
+
+    public List<Movimentacao> listarTodas() {
+        return new ArrayList<>(movimentacoes.values());
+    }
+
+    public Movimentacao obterPorId(Long id) {
+        Movimentacao mov = movimentacoes.get(id);
+        if (mov == null) {
+            throw new RegistroNaoLocalizadoException("Movimentação com ID " + id + " não encontrada.");
+        }
+        return mov;
     }
 }

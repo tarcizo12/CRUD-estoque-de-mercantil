@@ -1,4 +1,6 @@
-package com.gerenciador.estoque.domain;
+package com.gerenciador.estoque.domain.entity;
+
+import com.gerenciador.estoque.domain.enums.TipoMovimentacao;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -26,19 +28,53 @@ public class Movimentacao {
         item.setMovimentacao(this);
     }
 
-    // Getters e Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    public LocalDateTime getDataHora() { return dataHora; }
-    public void setDataHora(LocalDateTime dataHora) { this.dataHora = dataHora; }
-    public TipoMovimentacao getTipo() { return tipo; }
-    public void setTipo(TipoMovimentacao tipo) { this.tipo = tipo; }
-    public Usuario getUsuario() { return usuario; }
-    public void setUsuario(Usuario usuario) { this.usuario = usuario; }
-    public String getObservacao() { return observacao; }
-    public void setObservacao(String observacao) { this.observacao = observacao; }
-    public List<ItemMovimentacao> getItens() { return itens; }
-    public void setItens(List<ItemMovimentacao> itens) { this.itens = itens; }
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public LocalDateTime getDataHora() {
+        return dataHora;
+    }
+
+    public void setDataHora(LocalDateTime dataHora) {
+        this.dataHora = dataHora;
+    }
+
+    public TipoMovimentacao getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(TipoMovimentacao tipo) {
+        this.tipo = tipo;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
+
+    public String getObservacao() {
+        return observacao;
+    }
+
+    public void setObservacao(String observacao) {
+        this.observacao = observacao;
+    }
+
+    public List<ItemMovimentacao> getItens() {
+        return itens;
+    }
+
+    public void setItens(List<ItemMovimentacao> itens) {
+        this.itens = itens;
+    }
 
     @Override
     public String toString() {

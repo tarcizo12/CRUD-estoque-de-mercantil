@@ -1,4 +1,4 @@
-package com.gerenciador.estoque.domain;
+package com.gerenciador.estoque.domain.entity;
 
 public class ProdutoNaoPerecivel extends Produto {
     private Integer garantiaMeses;
@@ -15,8 +15,13 @@ public class ProdutoNaoPerecivel extends Produto {
     @Override
     public boolean isValido() { return true; }
 
-    public Integer getGarantiaMeses() { return garantiaMeses; }
-    public void setGarantiaMeses(Integer garantiaMeses) { this.garantiaMeses = garantiaMeses; }
+    public Integer getGarantiaMeses() {
+        return garantiaMeses;
+    }
+
+    public void setGarantiaMeses(Integer garantiaMeses) {
+        this.garantiaMeses = garantiaMeses;
+    }
 
     @Override
     public String toString() {
