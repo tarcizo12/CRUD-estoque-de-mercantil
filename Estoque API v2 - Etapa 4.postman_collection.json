@@ -31,44 +31,6 @@
               "response": []
             },
             {
-              "name": "Listar apenas produtos válidos",
-              "request": {
-                "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": "{{baseUrl}}/api/produtos/validos",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "produtos",
-                    "validos"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "Listar produtos inválidos (vencidos)",
-              "request": {
-                "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": "{{baseUrl}}/api/produtos/invalidos",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "produtos",
-                    "invalidos"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
               "name": "Listar produtos com estoque baixo (limite=5)",
               "request": {
                 "method": "GET",
