@@ -1,3 +1,4 @@
+```markdown
 # CRUD - Estoque de Produtos
 
 Repositório destinado à entrega do trabalho final na disciplina **"Desenvolvimento de aplicações Java com Spring Boot [26E3_2]"**.
@@ -53,9 +54,41 @@ O diagrama abaixo ilustra o modelo de classes, com todos os relacionamentos e a 
 - **Java 21**
 - **Spring Boot 3.3.4**
 - **Spring Web** (construção da API REST)
+- **Spring Data JPA** (persistência de dados)
+- **H2 Database** (banco de dados em memória para desenvolvimento/testes)
+- **Bean Validation** (validação de dados de entrada)
 - **SpringDoc OpenAPI (Swagger UI)** – documentação interativa
 - **Maven** – gerenciamento de dependências
-- **Armazenamento em memória** (`Map`) – até a Etapa 4
+
+---
+
+## Banco de Dados e Persistência (Etapa 4)
+
+### Configuração do H2
+
+A aplicação utiliza o banco de dados H2 em memória, configurado automaticamente. Para acessar o console do H2:
+
+- **URL:** `http://localhost:8080/h2-console`
+- **JDBC URL:** `jdbc:h2:mem:estoque_db`
+- **Usuário:** `sa`
+- **Senha:** (vazio)
+
+### Mapeamento JPA
+
+As entidades foram mapeadas com anotações JPA:
+
+- `@Entity` para classes persistentes.
+- `@Id` e `@GeneratedValue` para chaves primárias.
+- `@OneToMany` e `@ManyToOne` para relacionamentos.
+- Estratégia `InheritanceType.SINGLE_TABLE` para herança de produtos.
+
+Os repositórios estendem `JpaRepository`, fornecendo métodos CRUD prontos e consultas personalizadas.
+
+### Arquitetura atual
+
+```
+Cliente HTTP → Controller → Service → Repository → Banco de Dados (H2)
+```
 
 ---
 
@@ -68,6 +101,11 @@ A API está disponível em `http://localhost:8080` e expõe os seguintes recurso
 | Método | Endpoint | Descrição |
 |--------|----------|-----------|
 | GET    | `/api/produtos` | Lista todos os produtos (ordenados por nome) |
+| GET    | `/api/produtos/validos` | Lista apenas produtos válidos (não vencidos) |
+| GET    | `/api/produtos/invalidos` | Lista produtos vencidos |
+| GET    | `/api/produtos/estoque-baixo` | Lista produtos com estoque abaixo de um limite (default 10) |
+| GET    | `/api/produtos/categoria/{id}` | Filtra produtos por categoria |
+| GET    | `/api/produtos/fornecedor/{id}` | Filtra produtos por fornecedor |
 | GET    | `/api/produtos/{id}` | Busca um produto pelo ID |
 | POST   | `/api/produtos` | Cadastra um novo produto (perecível ou não) |
 | PUT    | `/api/produtos/{id}` | Atualiza completamente um produto existente |
@@ -80,6 +118,37 @@ A API está disponível em `http://localhost:8080` e expõe os seguintes recurso
 | POST   | `/api/movimentacoes` | Registra uma entrada ou saída de produtos (atualiza o estoque) |
 | GET    | `/api/movimentacoes` | Lista todas as movimentações registradas |
 | GET    | `/api/movimentacoes/{id}` | Busca uma movimentação pelo ID |
+
+---
+
+## Validação de Dados (Bean Validation)
+
+As requisições são validadas utilizando anotações Bean Validation nos DTOs:
+
+- `@NotBlank` – para campos obrigatórios e não vazios.
+- `@NotNull` – para campos que não podem ser nulos.
+- `@Size` – para limites de tamanho em strings.
+- `@Min` e `@Max` – para valores numéricos.
+- `@Positive` – para valores positivos (ex: preço, quantidade).
+
+Quando uma validação falha, a API retorna status `400 Bad Request` com uma mensagem descritiva. Exemplo:
+
+```json
+{
+  "timestamp": "2026-08-30T21:00:00",
+  "mensagem": "Erro de validação: Nome é obrigatório; Categoria é obrigatória",
+  "status": 400,
+  "path": "/api/produtos"
+}
+```
+
+### Validações implementadas nos DTOs
+
+- `ProdutoRequest`: nome, preço, quantidade, categoria, fornecedor e flag perecivel são obrigatórios.
+- `MovimentacaoRequest`: tipo e usuário são obrigatórios; a lista de itens não pode estar vazia.
+- `ItemMovimentacaoRequest`: produto e quantidade são obrigatórios.
+- `UsuarioRequest`: id e nome são obrigatórios.
+- `CategoriaRequest` e `FornecedorRequest`: campos obrigatórios marcados.
 
 ---
 
@@ -142,22 +211,37 @@ A documentação completa da API está disponível através do **Swagger UI**, q
 
 **Acesse:** [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
 
-![](./CRUD.png)
+![Swagger UI](./CRUD.png)
 
 ---
 
-## Como Executar o Projeto (Etapa 3 – em memória)
+## Como Executar o Projeto (Etapa 4 – com JPA/H2)
 
 1. Clone o repositório:
    ```bash
    git clone https://github.com/seu-usuario/CRUD-estoque-de-mercantil.git
    ```
-2. Importe o projeto como Maven em sua IDE.
-3. Execute a classe `EstoqueApplication.java` (Spring Boot).
-4. A aplicação iniciará na porta `8080`.
-5. Use o **Swagger UI** ou ferramentas como **Postman** para testar os endpoints.
 
-> **Atenção:** Os dados são armazenados apenas em memória (`Map`). Ao reiniciar a aplicação, todo o estado é perdido. Na Etapa 4, será implementada a persistência com JPA.
+2. Importe o projeto como Maven em sua IDE.
+
+3. Certifique-se de que o banco de dados H2 esteja configurado (já incluso nas propriedades padrão).
+
+4. Execute a classe `EstoqueApplication.java` (Spring Boot). O banco de dados H2 será criado automaticamente em memória.
+
+5. A aplicação iniciará na porta `8080`.
+
+6. Use o **Swagger UI**, **Postman** ou **console H2** para testar os endpoints.
+
+> **Atenção:** O H2 está configurado em memória. Os dados são perdidos ao reiniciar a aplicação. Para ambientes produtivos, recomenda-se usar um banco persistente (PostgreSQL, MySQL, etc.).
+
+### Acessando o console H2
+
+Durante a execução da aplicação, acesse:
+
+- `http://localhost:8080/h2-console`
+- **JDBC URL:** `jdbc:h2:mem:estoque_db`
+- **User Name:** `sa`
+- **Password:** 123
 
 ---
 
@@ -165,16 +249,33 @@ A documentação completa da API está disponível através do **Swagger UI**, q
 
 Para visualizar ou testar o estado do projeto em cada etapa, utilize as tags criadas no repositório:
 
-- **Etapa 1 – Modelagem Orientada a Objetos**
-  ```bash
-  git checkout etapa-1
-  ```  
+**Etapa 1 – Modelagem Orientada a Objetos**
+```bash
+git checkout etapa-1
+```
 Neste ponto, o projeto contém apenas as classes de domínio (entidades), com relacionamentos e herança, sem serviços ou API REST. Para ver exemplos de instanciação, utilize o método RUNNER_CASOS_TESTES dentro da classe EstoqueApplication. Para isso, comente a linha SpringApplication.run(EstoqueApplication.class, args); e descomente a chamada RUNNER_CASOS_TESTES(args); no método main. A execução exibirá no console objetos criados para demonstrar o funcionamento das entidades.
-- **Etapa 2 – Estruturas de Dados e Serviços**
-  ```bash
-  git checkout etapa-2
-  ```  
-Aqui já estão implementados os serviços com armazenamento em memória (Map) e as regras de negócio (CRUD de produtos, movimentações, validações). Ainda não há exposição REST. Para testar a lógica, utilize o mesmo procedimento: no main, comente a linha que inicia a aplicação web e descomente RUNNER_CASOS_TESTES(args);. Esse runner executará a rotina ROTINA_PERSISTENCIA_UTILIZANDO_MAP, que popula o estoque, lista produtos, testa entradas e saídas com validações de estoque insuficiente, e exibe os resultados no console
 
+**Etapa 2 – Estruturas de Dados e Serviços**
+```bash
+git checkout etapa-2
+```
+Aqui já estão implementados os serviços com armazenamento em memória (Map) e as regras de negócio (CRUD de produtos, movimentações, validações). Ainda não há exposição REST. Para testar a lógica, utilize o mesmo procedimento: no main, comente a linha que inicia a aplicação web e descomente RUNNER_CASOS_TESTES(args);. Esse runner executará a rotina ROTINA_PERSISTENCIA_UTILIZANDO_MAP, que popula o estoque, lista produtos, testa entradas e saídas com validações de estoque insuficiente, e exibe os resultados no console.
+
+**Etapa 3 – API REST com Spring Boot**
+```bash
+git checkout etapa-3
+```
+A API REST já está exposta, com os controllers e documentação Swagger, mas os dados ainda são armazenados em memória (Map). Para executar, basta rodar a aplicação normalmente – o método main inicia o servidor embutido.
+
+**Etapa 4 – Persistência com JPA (versão atual)**
+```bash
+git checkout etapa-4
+```
+Versão final com Spring Data JPA, H2, Bean Validation e todos os recursos implementados.
+
+Para retornar à versão mais recente (geralmente a main ou a etapa mais avançada):
+```bash
+git checkout main
+```
 
 ---

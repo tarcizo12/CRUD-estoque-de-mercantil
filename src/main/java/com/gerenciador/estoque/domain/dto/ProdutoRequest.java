@@ -2,30 +2,37 @@ package com.gerenciador.estoque.domain.dto;
 
 import com.gerenciador.estoque.domain.entity.*;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
 
 public class ProdutoRequest {
-    @Schema(description = "Nome do produto", example = "Monitor LED")
+    @NotBlank(message = "Nome é obrigatório")
+    @Size(max = 100, message = "Nome deve ter no máximo 100 caracteres")
     private String nome;
 
-    @Schema(description = "Descrição detalhada", example = "Monitor LED 24 polegadas Full HD")
+    @Size(max = 255)
     private String descricao;
 
-    @Schema(description = "Preço unitário", example = "899.90")
+    @NotNull(message = "Preço é obrigatório")
+    @Min(value = 0, message = "Preço não pode ser negativo")
     private Double preco;
 
-    @Schema(description = "Quantidade em estoque", example = "50")
+    @NotNull(message = "Quantidade em estoque é obrigatória")
+    @Min(value = 0, message = "Quantidade não pode ser negativa")
     private Integer quantidadeEstoque;
 
-    @Schema(description = "Categoria do produto (objeto completo)")
+    @NotNull(message = "Categoria é obrigatória")
     private CategoriaRequest categoria;
 
-    @Schema(description = "Fornecedor do produto (objeto completo)")
+    @NotNull(message = "Fornecedor é obrigatório")
     private FornecedorRequest fornecedor;
 
-    @Schema(description = "Indica se o produto é perecível", example = "false")
-    private boolean perecivel;
+    @NotNull(message = "Deve informar se é perecível")
+    private Boolean perecivel;
 
     @Schema(description = "Data de validade (obrigatório se perecivel)", example = "2026-12-31")
     private LocalDate dataValidade;
@@ -34,6 +41,7 @@ public class ProdutoRequest {
     private String lote;
 
     @Schema(description = "Garantia em meses (obrigatório se não perecivel)", example = "12")
+    @Min(value = 0, message = "Garantia não pode ser negativa")
     private Integer garantiaMeses;
 
     public Produto toProduto() {

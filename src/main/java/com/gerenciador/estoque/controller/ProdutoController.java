@@ -4,6 +4,7 @@ import com.gerenciador.estoque.controller.docs.ProdutoControllerDocs;
 import com.gerenciador.estoque.domain.dto.ProdutoRequest;
 import com.gerenciador.estoque.domain.entity.Produto;
 import com.gerenciador.estoque.service.ProdutoService;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -49,7 +50,7 @@ public class ProdutoController implements ProdutoControllerDocs {
     }
 
     @PostMapping
-    public ResponseEntity<Produto> incluir(@RequestBody ProdutoRequest request) {
+    public ResponseEntity<Produto> incluir(@Valid @RequestBody ProdutoRequest request) {
         Produto novo = produtoService.incluir(request.toProduto());
         log.info("Produto {} incluído com sucesso.", novo.getNome());
         return ResponseEntity.status(HttpStatus.CREATED).body(novo);

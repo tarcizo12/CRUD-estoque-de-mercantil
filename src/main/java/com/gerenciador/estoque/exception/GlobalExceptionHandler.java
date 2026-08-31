@@ -3,10 +3,14 @@
 
     import com.gerenciador.estoque.domain.dto.ErroResponse;
     import jakarta.servlet.http.HttpServletRequest;
+    import org.springframework.context.support.DefaultMessageSourceResolvable;
     import org.springframework.http.HttpStatus;
     import org.springframework.http.ResponseEntity;
+    import org.springframework.web.bind.MethodArgumentNotValidException;
     import org.springframework.web.bind.annotation.ExceptionHandler;
     import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+    import java.util.stream.Collectors;
 
     @RestControllerAdvice
     public class GlobalExceptionHandler {
@@ -40,5 +44,19 @@
                     request.getRequestURI()
             );
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(erro);
+        }
+
+        @ExceptionHandler(MethodArgumentNotValidException.class)
+        public ResponseEntity<ErroResponse> handleValidationExceptions(MethodArgumentNotValidException ex,
+                                                                       HttpServletRequest request) {
+            String mensagem = ex.getBindingResult().getAllErrors().stream()
+                    .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                    .collect(Collectors.joining("; "));
+            ErroResponse erro = new ErroResponse(
+                    "Erro de validação: " + mensagem,
+                    HttpStatus.BAD_REQUEST.value(),
+                    request.getRequestURI()
+            );
+            return ResponseEntity.badRequest().body(erro);
         }
     }
