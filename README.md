@@ -1,5 +1,3 @@
-Claro. Mantive o conteúdo e a organização original, mas corrigi a **formatação Markdown**, principalmente tabelas, blocos de código, listas, JSON, títulos, espaçamentos e citações. Também deixei a seção das etapas anteriores mais legível.
-
 # CRUD - Estoque de Produtos
 
 Repositório destinado à entrega do trabalho final na disciplina **"Desenvolvimento de aplicações Java com Spring Boot [26E3_2]"**.
