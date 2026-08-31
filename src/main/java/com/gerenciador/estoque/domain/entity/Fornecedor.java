@@ -1,13 +1,30 @@
 package com.gerenciador.estoque.domain.entity;
 
 
+import jakarta.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
+@Table(name = "fornecedores")
 public class Fornecedor {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false)
     private String nome;
+
+    @Column(unique = true, length = 18)
     private String cnpj;
+
     private String telefone;
     private String email;
     private String endereco;
+
+    @OneToMany(mappedBy = "fornecedor")
+    private List<Produto> produtos = new ArrayList<>();
 
     public Fornecedor() {}
 

@@ -1,11 +1,30 @@
 package com.gerenciador.estoque.domain.entity;
 
+import jakarta.persistence.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
+@Table(name = "usuarios")
 public class Usuario {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false)
     private String nome;
+
+    @Column(unique = true, nullable = false)
     private String login;
+
     private String senha;
+
     private String perfil; // ADMIN, OPERADOR
+
+    @OneToMany(mappedBy = "usuario")
+    private List<Movimentacao> movimentacoes = new ArrayList<>();
 
     public Usuario() {}
 

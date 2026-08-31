@@ -1,17 +1,32 @@
 package com.gerenciador.estoque.domain.entity;
 
 import com.gerenciador.estoque.domain.enums.TipoMovimentacao;
+import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Entity
+@Table(name = "movimentacoes")
 public class Movimentacao {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private LocalDateTime dataHora;
+
+    @Enumerated(EnumType.STRING)
     private TipoMovimentacao tipo;
+
+    @ManyToOne
+    @JoinColumn(name = "usuario_id")
     private Usuario usuario;
+
     private String observacao;
+
+    @OneToMany(mappedBy = "movimentacao", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ItemMovimentacao> itens = new ArrayList<>();
 
     public Movimentacao() {}

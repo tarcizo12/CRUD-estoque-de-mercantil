@@ -1,11 +1,16 @@
 package com.gerenciador.estoque.domain.entity;
 
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+
 import java.time.LocalDate;
 
+@Entity
+@DiscriminatorValue("PERECIVEL")
 public class ProdutoPerecivel extends Produto {
+
     private LocalDate dataValidade;
     private String lote;
-
     public ProdutoPerecivel() {}
 
     public ProdutoPerecivel(String nome, String descricao, Double preco, Integer quantidadeEstoque,

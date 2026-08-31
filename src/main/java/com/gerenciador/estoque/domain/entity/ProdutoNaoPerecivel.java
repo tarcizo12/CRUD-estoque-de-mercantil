@@ -1,6 +1,12 @@
 package com.gerenciador.estoque.domain.entity;
 
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+
+@Entity
+@DiscriminatorValue("NAO_PERECIVEL")
 public class ProdutoNaoPerecivel extends Produto {
+
     private Integer garantiaMeses;
 
     public ProdutoNaoPerecivel() {}

@@ -1,12 +1,25 @@
 package com.gerenciador.estoque.domain.entity;
 
 
-public class ItemMovimentacao {
-    private Long id;
-    private Integer quantidade;
-    private Produto produto;
-    private Movimentacao movimentacao;
+import jakarta.persistence.*;
 
+@Entity
+@Table(name = "itens_movimentacao")
+public class ItemMovimentacao {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private Integer quantidade;
+
+    @ManyToOne
+    @JoinColumn(name = "produto_id")
+    private Produto produto;
+
+    @ManyToOne
+    @JoinColumn(name = "movimentacao_id")
+    private Movimentacao movimentacao;
     public ItemMovimentacao() {}
 
     public ItemMovimentacao(Integer quantidade, Produto produto) {
